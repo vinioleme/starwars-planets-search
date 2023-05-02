@@ -1,12 +1,11 @@
 import React from 'react';
 import './App.css';
+import Table from './Components/Table';
 
-function App() {
+export default function App() {
   return (
-    <span>Hello, App!</span>
+    <span>
+      <Table />
+    </span>
   );
 }
-
-export default App;
-
-// iniciando o projeto
