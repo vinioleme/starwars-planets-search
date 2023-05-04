@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
-import ApiContext from '../Context/ApiContext';
+import mainContext from '../Context/mainContext';
 
 export default function Table() {
-  const { api } = useContext(ApiContext);
+  const { planets } = useContext(mainContext);
 
   const titles = [
     'Name',
@@ -22,17 +22,18 @@ export default function Table() {
 
   return (
     <div>
+
       <table>
         <thead>
           <tr>
-            {titles.map((title, ind) => (<th key={ ind }>{title}</th>))}
+            {titles.map((title, i) => (<th key={ i }>{title}</th>))}
           </tr>
 
         </thead>
 
         <tbody>
 
-          {api.map((element) => (
+          {planets.map((element) => (
             <tr key={ element.name }>
               <td data-testid="planet-name">{element.name}</td>
               <td>{element.rotation_period}</td>
