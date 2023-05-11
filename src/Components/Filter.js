@@ -2,10 +2,18 @@ import React from 'react';
 import useFilters from '../Hooks/useFilters';
 
 export default function Filter() {
-  const { filter, handleFilters, selectData, handleChange, handleClick } = useFilters();
+  const { filter,
+    handleFilters,
+    selectData,
+    handleChange,
+    handleClick,
+    handleRemove,
+    handleRemoveAll,
+  } = useFilters();
+
   const { filters, valueFilter } = filter;
 
-  const selectedColum = selectData.map((element) => element.colum);
+  const selectedColum = selectData.map((el) => el.colum);
 
   return (
     <div>
@@ -24,7 +32,7 @@ export default function Filter() {
         <select
           name="columnFilter"
           id="columnFilter"
-          value={ filter.filterCol }
+          value={ filter.columnFilter }
           data-testid="column-filter"
           onChange={ handleChange }
           onClick={ handleChange }
@@ -73,6 +81,7 @@ export default function Filter() {
 
         </select>
       </label>
+
       <label htmlFor="comparisonFilter">
 
         Operador
@@ -114,6 +123,36 @@ export default function Filter() {
       >
         Filtrar
 
+      </button>
+
+      {selectData.map((planet) => (
+        <div
+          key={ planet.colum }
+          data-testid="filter"
+        >
+          {planet.colum}
+          {' '}
+          {planet.condition}
+          {' '}
+          {planet.value}
+
+          <button
+            name={
+              planet.colum
+            }
+            onClick={ handleRemove }
+          >
+            X
+
+          </button>
+
+        </div>))}
+
+      <button
+        data-testid="button-remove-filters"
+        onClick={ handleRemoveAll }
+      >
+        Remover todas filtragens
       </button>
 
     </div>

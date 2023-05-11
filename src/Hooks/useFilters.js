@@ -3,9 +3,11 @@ import mainContext from '../Context/mainContext';
 
 const states = {
   filters: '',
-  filterCol: 'population',
-  compFilter: 'maior que',
+  columnFilter: 'population',
+  comparisonFilter: 'maior que',
   valueFilter: 0,
+  columSort: 'population',
+  conditionSort: null,
 };
 
 const planetsData = [
@@ -16,14 +18,14 @@ const planetsData = [
   'surface_water',
 ];
 
-const selectData = [];
+let selectData = [];
 
 export default function useFilters() {
   const [filter, setFilter] = useState(states);
 
   const [planetsOptions, setPlanetsOptions] = useState(planetsData);
 
-  const { api, setSearch, search, setPlanets } = useContext(mainContext);
+  const { api, setSearch, setPlanets, search } = useContext(mainContext);
 
   const filterByText = (text) => {
     const filterElement = api.filter((planet) => (planet.name.toLowerCase())
@@ -34,10 +36,26 @@ export default function useFilters() {
   const filterPlanets = (planets, filterText) => planets.filter((planet) => planet
     .name.toLowerCase().includes(filterText));
 
+  const changingOptions = () => {
+    const newPlanetsOptions = planetsOptions.filter((el) => !el
+      .includes(filter.columnFilter));
+    setPlanetsOptions(newPlanetsOptions);
+  };
+
+  const handleClick = () => {
+    selectData.push(
+      { colum: filter.columnFilter,
+        condition: filter.comparisonFilter,
+        value: filter.valueFilter,
+      },
+    );
+    changingOptions();
+  };
+
   useEffect(() => {
-    const cond = search.filter((planet) => {
+    const filteredPlanets = search.filter((planet) => {
       const newArr = selectData.map((selected) => {
-        switch (selected.cond) {
+        switch (selected.condition) {
         case 'maior que':
           return Number(planet[selected.colum]) > Number(selected.value);
         case 'menor que':
@@ -49,9 +67,9 @@ export default function useFilters() {
       return newArr.every((el) => el);
     });
 
-    setPlanets(cond);
+    setPlanets(filteredPlanets);
     setSearch(filterPlanets(api, filter.filters));
-  }, [search, planetsOptions, setPlanets, filter.filters, setSearch, api]);
+  }, [filter, planetsOptions, setPlanets, search, setSearch, api]);
 
   const handleFilters = ({ target }) => {
     const { value } = target;
@@ -70,24 +88,32 @@ export default function useFilters() {
     });
   };
 
-  const changingOptions = () => {
-    const changeOpt = planetsOptions.filter((planet) => !planet
-      .includes(filter.filterCol));
-    setPlanetsOptions(changeOpt);
+  const handleRemove = ({ target }) => {
+    const { name } = target;
+    const newSelectData = selectData.filter((el) => !el.colum.includes(name));
+    const newPlanetsOptions = planetsOptions.filter((el) => !el.includes(name));
     setFilter({
       ...filter,
-      filterCol: changeOpt[0],
+      columnFilter: name,
     });
+    setPlanetsOptions(newPlanetsOptions);
+    selectData = newSelectData;
   };
 
-  const handleClick = () => {
-    selectData.push(
-      { colum: filter.filterCol,
-        condition: filter.compFilter,
-        value: filter.valueFilter,
-      },
-    );
-    changingOptions();
+  const handleRemoveAll = () => {
+    selectData = [];
+    setPlanetsOptions([...planetsOptions, ...planetsData]);
+  };
+
+  const handleSort = () => {
+    const newArray = [...test];
+    newArray.sort((a, b) => {
+      if (filter.conditionSort === 'ASC') {
+        return a[filter.columSort] - b[filter.columSort];
+      }
+      return b[filter.columSort] - a[filter.columSort];
+    });
+    setPlanets(newArray);
   };
 
   return {
@@ -100,5 +126,8 @@ export default function useFilters() {
     handleChange,
     changingOptions,
     handleClick,
+    handleRemove,
+    handleRemoveAll,
+    handleSort,
   };
 }
