@@ -7,6 +7,7 @@ export default function useFetchApi() {
 
   const requestFetch = async () => {
     const response = await fetch('https://swapi.dev/api/planets');
+
     try {
       const json = await response.json();
 
@@ -20,7 +21,7 @@ export default function useFetchApi() {
 
   useEffect(() => {
     requestFetch();
-  });
+  }, []);
 
   return {
     api,

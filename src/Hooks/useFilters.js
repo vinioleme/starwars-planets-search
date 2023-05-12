@@ -7,7 +7,7 @@ const states = {
   comparisonFilter: 'maior que',
   valueFilter: 0,
   columSort: 'population',
-  conditionSort: null,
+  conditionSort: '',
 };
 
 const planetsData = [
@@ -28,56 +28,66 @@ export default function useFilters() {
   const { api, setSearch, setPlanets, search } = useContext(mainContext);
 
   const filterByText = (text) => {
-    const filterElement = api.filter((planet) => (planet.name.toLowerCase())
+    const filterElement = api.filter((planet) => (planet
+      .name.toLowerCase())
       .includes(text));
     setSearch(filterElement);
   };
 
-  const filterPlanets = (planets, filterText) => planets.filter((planet) => planet
-    .name.toLowerCase().includes(filterText));
-
   const changingOptions = () => {
     const newPlanetsOptions = planetsOptions.filter((el) => !el
-      .includes(filter.columnFilter));
+      .includes(filter
+        .columnFilter));
     setPlanetsOptions(newPlanetsOptions);
   };
 
   const handleClick = () => {
     selectData.push(
-      { colum: filter.columnFilter,
-        condition: filter.comparisonFilter,
-        value: filter.valueFilter,
+      { colum: filter
+        .columnFilter,
+      condition: filter
+        .comparisonFilter,
+      value: filter
+        .valueFilter,
       },
     );
     changingOptions();
   };
 
   useEffect(() => {
-    const filteredPlanets = search.filter((planet) => {
-      const newArr = selectData.map((selected) => {
+    const planetsArray = search.filter((planet) => {
+      const newArray = selectData.map((selected) => {
         switch (selected.condition) {
         case 'maior que':
-          return Number(planet[selected.colum]) > Number(selected.value);
+          return Number(planet[selected
+            .colum]) > Number(selected.value);
         case 'menor que':
-          return Number(planet[selected.colum]) < Number(selected.value);
+          return Number(planet[selected
+            .colum]) < Number(selected.value);
         default:
-          return Number(planet[selected.colum]) === Number(selected.value);
+          return Number(planet[selected
+            .colum]) === Number(selected.value);
         }
       });
-      return newArr.every((el) => el);
+      return newArray.every((el) => el);
     });
 
-    setPlanets(filteredPlanets);
-    setSearch(filterPlanets(api, filter.filters));
-  }, [filter, planetsOptions, setPlanets, search, setSearch, api]);
+    setPlanets(planetsArray);
+  }, [filter,
+    planetsOptions,
+    setPlanets,
+    search]);
 
   const handleFilters = ({ target }) => {
     const { value } = target;
-    filterByText(value);
-    setFilter((prevFilter) => ({
-      ...prevFilter,
+
+    const newFilter = {
+      ...filter,
       filters: value.toLowerCase(),
-    }));
+    };
+
+    setFilter(newFilter);
+    filterByText(value);
   };
 
   const handleChange = ({ target }) => {
@@ -88,10 +98,21 @@ export default function useFilters() {
     });
   };
 
-  const handleRemove = ({ target }) => {
+  const handleDeleteFilter = ({ target }) => {
     const { name } = target;
-    const newSelectData = selectData.filter((el) => !el.colum.includes(name));
-    const newPlanetsOptions = planetsOptions.filter((el) => !el.includes(name));
+    const newSelectData = [];
+    const newPlanetsOptions = [];
+
+    selectData.forEach((el) => {
+      if (!el.colum
+        .includes(name)) {
+        newSelectData.push(el);
+        if (!newPlanetsOptions.includes(el.colum)) {
+          newPlanetsOptions.push(el.colum);
+        }
+      }
+    });
+
     setFilter({
       ...filter,
       columnFilter: name,
@@ -100,20 +121,9 @@ export default function useFilters() {
     selectData = newSelectData;
   };
 
-  const handleRemoveAll = () => {
+  const handleRemoveAllFilters = () => {
     selectData = [];
     setPlanetsOptions([...planetsOptions, ...planetsData]);
-  };
-
-  const handleSort = () => {
-    const newArray = [...test];
-    newArray.sort((a, b) => {
-      if (filter.conditionSort === 'ASC') {
-        return a[filter.columSort] - b[filter.columSort];
-      }
-      return b[filter.columSort] - a[filter.columSort];
-    });
-    setPlanets(newArray);
   };
 
   return {
@@ -126,8 +136,7 @@ export default function useFilters() {
     handleChange,
     changingOptions,
     handleClick,
-    handleRemove,
-    handleRemoveAll,
-    handleSort,
+    handleDeleteFilter,
+    handleRemoveAllFilters,
   };
 }

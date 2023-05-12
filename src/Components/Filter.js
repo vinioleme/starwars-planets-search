@@ -7,8 +7,8 @@ export default function Filter() {
     selectData,
     handleChange,
     handleClick,
-    handleRemove,
-    handleRemoveAll,
+    handleDeleteFilter,
+    handleRemoveAllFilters,
   } = useFilters();
 
   const { filters, valueFilter } = filter;
@@ -32,7 +32,8 @@ export default function Filter() {
         <select
           name="columnFilter"
           id="columnFilter"
-          value={ filter.columnFilter }
+          value={ filter
+            .columnFilter }
           data-testid="column-filter"
           onChange={ handleChange }
           onClick={ handleChange }
@@ -89,7 +90,8 @@ export default function Filter() {
         <select
           name="comparisonFilter"
           id="comparisonFilter"
-          value={ filter.comparisonFilter }
+          value={ filter
+            .comparisonFilter }
           data-testid="comparison-filter"
           onChange={ handleChange }
           onClick={ handleChange }
@@ -130,17 +132,20 @@ export default function Filter() {
           key={ planet.colum }
           data-testid="filter"
         >
-          {planet.colum}
+          {planet
+            .colum}
           {' '}
-          {planet.condition}
+          {planet
+            .condition}
           {' '}
-          {planet.value}
+          {planet
+            .value}
 
           <button
             name={
               planet.colum
             }
-            onClick={ handleRemove }
+            onClick={ handleDeleteFilter }
           >
             X
 
@@ -150,9 +155,9 @@ export default function Filter() {
 
       <button
         data-testid="button-remove-filters"
-        onClick={ handleRemoveAll }
+        onClick={ handleRemoveAllFilters }
       >
-        Remover todas filtragens
+        Remover todos os Filtros
       </button>
 
     </div>
